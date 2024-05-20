@@ -1,0 +1,152 @@
+<div class = "main-container">
+    <div class = "grid-item row-container">
+        <div class = "grid-item top-left-grid" style="height: 50vh">
+            <div style="display: flex; justify-content: space-around; padding-top: 10px;">
+                <p style="margin: 8px;">Selected Location: {{selectedLocationName}}</p>
+                <input style="width: 20%; height: 40%; padding: 5px; border-radius: 20px; border: 0px;" #autocomplete class="input-field" type="text" [(ngModel)]="autocompleteInput" placeholder="Enter location">
+                <button class = "get-current-button" (click)="onClickCurrentLocation()">Get Current Location</button>
+            </div>
+            <div id="map" style="height: 45vh; border-radius: 20px;"></div>
+            <div *ngIf = "distance != -1">
+                <div style="display: flex; justify-content: space-around;">
+                    <p>Distance from location: {{distance}} Miles</p>
+                    <p>Estimated Time to Destination: {{this.timeToDestination}} </p>
+                </div>
+            </div>
+        </div>
+        <div class = "grid-item bottom-left-grid" style="padding-top: 15px;">
+            <div class = "grid-item">
+                <h3>Filters:</h3>
+            </div>
+            <div class = "grid-item">
+                <h4 style="font-size: 12px;">Vehicle Type:</h4>
+                <div class = 'grid-container' (click)="setVehicleSelected('bicycle')" [ngClass]="{'selected':vehicleSelected == 'bicycle', 'unselected':vehicleSelected!='bicycle'}">
+                    <img height = "100%" width="100%" src="../assets/bike-logo.png" alt="">
+                </div>
+                <div class = 'grid-container' (click)="setVehicleSelected('car')" [ngClass]="{'selected':vehicleSelected == 'car', 'unselected':vehicleSelected!='car'}">
+                    <img height = "100%" width="100%" src="../assets/car-logo.png" alt="">
+                </div>
+            </div>
+
+            <div class = "grid-item" *ngIf="vehicleSelected != 'bicycle'">
+                <h4 style="font-size: 12px;">EV Support:</h4>
+                <div class = 'grid-container' (click)="setEVSelected('true')" [ngClass]="{'selected':isEVSelected=='true', 'unselected':isEVSelected!='true'}">
+                    <img height = "100%" width="100%" src="../assets/ev-yes.png" alt="">
+                </div>
+                <div class = 'grid-container' (click)="setEVSelected('false')" [ngClass]="{'selected':isEVSelected=='false', 'unselected':isEVSelected!='false'}">
+                    <img height = "100%" width="100%" src="../assets/ev-no.png" alt="">
+                </div>
+            </div>
+
+            <div class = "grid-item" *ngIf="vehicleSelected != 'bicycle'">
+                <h4 style="font-size: 12px;">Parking Size:</h4>
+                <div class = 'text-grid-container'  (click)="setSizeOfSpot('Small')" [ngClass]="{'selected':sizeOfSpot=='Small', 'unselected':sizeOfSpot!='Small'}">
+                    Small
+                </div>
+                <div class = 'text-grid-container' (click)="setSizeOfSpot('Medium')" [ngClass]="{'selected':sizeOfSpot=='Medium', 'unselected':sizeOfSpot!='Medium'}">
+                    Medium
+                </div>
+                <div class = 'text-grid-container' (click)="setSizeOfSpot('Large')" [ngClass]="{'selected':sizeOfSpot=='Large', 'unselected':sizeOfSpot!='Large'}">
+                    Large
+                </div>
+            </div>
+
+            <div class = "grid-item" style="font-size: 14px;"  *ngIf="vehicleSelected != 'bicycle'">
+                <h4 style="font-size: 12px;">Conditions:</h4>
+                <div class = 'text-grid-container'  (click)="setParkingCondition('Indoor')" [ngClass]="{'selected':parkingCondition=='Indoor', 'unselected':parkingCondition!='Indoor'}">
+                    Indoor
+                </div>
+                <div class = 'text-grid-container'  (click)="setParkingCondition('Outdoor')" [ngClass]="{'selected':parkingCondition=='Outdoor', 'unselected':parkingCondition!='Outdoor'}">
+                    Outdoor
+                </div>
+                <div class = 'text-grid-container'  (click)="setParkingCondition('Underground')" [ngClass]="{'selected':parkingCondition=='Underground', 'unselected':parkingCondition!='Underground'}">
+                    <!-- <p style="font-size: 12px;">Underground</p> -->
+                    Underground
+                </div>
+            </div>
+
+            <div class = "grid-item column">
+                <button class = "reset-button" (click)="resetFilter()">Reset</button>
+                <!-- <button class = "filter-button" (click)="filterParkingSpots()">Filter</button> -->
+            </div>
+        </div>
+    </div>
+    
+
+    <div class="grid-item top-right-grid">
+        <div class = "column">
+            <form action="">
+                <input [(ngModel)]="searchQuery" (ngModelChange)="filterParkingSpots()" style="width: 225px; height: 30px; border-radius: 0px; border: 1px solid black; margin-top: 10px;" name = "search" type="text" id="search" placeholder="Search">
+            </form>
+            <div class = "parking-list">
+                <div *ngIf = "!filteredParkingSpots.length">
+                    No Results Found...
+                </div>
+                <div *ngFor = "let parking of filteredParkingSpots" [ngClass]="{'parking-selected' : selectedParkingSpot == parking, 'parking-unselected' : selectedParkingSpot != parking}" style="cursor:pointer; border-radius: 10px;" (click)="clickOnParking(parking)">
+                    <div *ngIf = "!parking.isBikeRack" class = "row">
+                        <div class = "parking-img-container">
+                            <img width="100px" height="100px" src="../assets/parking-slots/{{parking.name}}.jpeg" alt="">
+                        </div>
+                        <div class = "column" style="width: 300px;">
+                            <h3 style="margin-bottom: 5px;">{{parking.name}}</h3>
+                            <p style="margin: 0px;">Available Spots: {{parking.spotsAvailable}} / {{parking.totalSpots}}</p>
+                            <p style="margin: 5px">${{parking.cost}}/hr</p>
+                            <div *ngIf = "parking.evAvilable">
+                                <p style="margin: 5px;">EV Friendly Parking</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div *ngIf = "parking.isBikeRack" class = "row">
+                        <div class = "parking-img-container" (click)="clickOnParking(parking)">
+                            <img width="100px" height="100px" src="../assets/parking-slots/bike-rack.webp" alt="">
+                        </div>
+                        <div class = "column" style="width: 300px;">
+                            <h3 style="margin-bottom: 5px;">{{parking.name}}</h3>
+                            <p style="margin: 0px;">Available Spots: {{parking.spotsAvailable}} / {{parking.totalSpots}}</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <button style="margin-left: 30%; background-color: rgb(142, 88, 192);" (click)="submitButton()">Submit</button>
+            <div *ngIf="errorCheck"><p style="color: rgb(184, 3, 3);">No Spots Available</p></div>
+            <div *ngIf="noSelectedError"><p style="color: rgb(184, 3, 3);">Please select a parking spot</p></div>
+        </div>
+    </div>
+
+    <div *ngIf="showLoginPopup" class = "popup">
+        <div class="popup-content">
+            <p>Please login to reserve spot</p>
+            <div style="margin-top: 20%;" class = "row">
+                <button class="close-button" style="background-color: rgb(160, 31, 224);" (click)="navigatePage('login')">Login</button>
+                <button class="continue-button" (click)="navigatePage('signup')">Register</button>
+            </div>
+            <button class = "login-back-button" (click)="closeLoginPopup()">Back</button>
+        </div>
+    </div>
+
+    <div *ngIf="showConfirmPopup" class = "popup">
+        <div class="popup-content">
+            <h4>Parking Spot Confirmed:</h4>
+            <div class = "row">
+                <button class="close-button" (click)="closePopup()">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <div *ngIf="isPopupVisible" class = "popup">
+        <div class="popup-content">
+            <p>Reserve Spot Confirmation:</p>
+            <h4>{{selectedParkingSpot.name}}</h4>
+            <p>Select a time:</p>
+            <select [(ngModel)]="selectedTime">
+                <option *ngFor="let time of availableTimes" [value]="time">{{ time }}</option>
+            </select>
+            <div class = "row">
+                <button class="close-button" (click)="closePopup()">Close</button>
+                <button class="continue-button" (click)="confirmSpot()">Reserve</button>
+            </div>
+        </div>
+    </div>
+</div>
+

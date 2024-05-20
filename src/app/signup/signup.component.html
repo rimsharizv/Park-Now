@@ -1,0 +1,47 @@
+<div class = "page-container">
+    <div class = "signup-container">
+        <!-- <div style = "margin-left: 8%;"></div>
+        <img height = "100px" width = "100px" src="assets/home/data-medic-logo2.webp" alt="" (click)="onButtonClick('')"> -->
+        
+        <div style="margin-top: 10%;" class = "vertically-align">
+            <div class = "column">
+                <div class = "details-container">
+                    <form style="margin-top: 5%; margin-left: 3%;">
+                        <div class = "row">
+                            <label for="fullname">Full Name: <span style = "color: red;">*</span></label>
+                            <div *ngIf = "!nameError" class = "error">Error</div>
+                        </div>
+                        <br>
+                        <input style = "color: white" type="text" id="fullname" name="fullname"><br>
+
+                        <div style="margin-bottom: 20%;"></div>
+                        
+                        <div class = "row">
+                            <label for="email">Email Address: <span style = "color: red;">*</span></label>
+                            <div *ngIf = "!emailError" class = "error">Error</div>
+                        </div> <br>
+                        <input style = "color: white" type="text" id="email" name="email"><br>
+
+                        <div style="margin-bottom: 20%;"></div>
+                        <label for="password">Password: <span style = "color: red;">*</span></label><br>
+                        <input style = "color: white" type="password" id="password" name="password"><br>
+
+                        <div style="margin-bottom: 20%;"></div>
+                        <div class = "row">
+                            <label for="cpassword">Confirm Password: <span style = "color: red;">*</span></label>
+                            <div *ngIf = "!passwordError" class = "error">Error</div>
+                        </div>
+                        <br>
+                        <input style = "color: white" type="password" id="cpassword" name="cpassword"><br>
+                    </form>
+                </div>
+                
+                <div style="margin-bottom: 20%;"></div>
+                <div class = "user-buttons row">
+                    <button class = "back-button" (click)="navigatePage('')"> Back </button>
+                    <button class = "signup-button" (click)="onSubmit()"> Sign up</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

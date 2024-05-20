@@ -1,0 +1,25 @@
+<div class = "login-container">
+    <div style = "margin-left: 8%;"></div>
+    <div class = "vertically-align">
+        <div class = "column">
+            <div class = "details-container">
+                <form>
+                    <label for="email">Email Address:</label><br>
+                    <input type="text" id="email" name="email"><br>
+                    <div style="margin-bottom: 20%;"></div>
+                    <label for="password">Password:</label><br>
+                    <input type="password" id="password" name="password"><br>
+                </form>
+            </div>
+
+            <div style="margin-bottom: 20%;"></div>
+            <div class = "user-buttons row">
+                <button class = "back-button" (click)="navigatePage('')"> Back </button>
+                <button class = "login-button" (click)="onSubmit()"> Login</button>
+            </div>
+            <div *ngIf = "loginFailed" style = "text-align: center;">
+                <p style="color: red">Login Failed</p>
+            </div>
+        </div>
+    </div>
+</div>

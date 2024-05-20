@@ -1,0 +1,12 @@
+/* You can add global styles to this file, and also import other style files */
+html{
+    background-image: url('assets/background.png');
+    /* background-color: #fffaf0; */
+    background-color: #3a4464;
+    /* background-color: beige; */
+    font-family: "Rubik", sans-serif;
+    color: white;
+    /* background-image: url('assets/background3.svg');
+    background-size: cover;
+    background-repeat: no-repeat; */
+}

@@ -1,0 +1,217 @@
+<div class = "main-container">
+    <div class = "grid-item">
+        <div id="map" style="height: 80vh; border-radius: 20px;"></div>
+    </div>
+    <div class = "grid-item">
+        <div style="margin-top: 30%;" *ngIf="parkingType == ''">
+            <div class = "column" style="text-align: center;">
+                <h2>Select Vehicle Parking</h2>
+                <div class = "checkboxes-container">
+                    <div class="checkbox" style="height: 200px; width: 200px;" (click)="selectParkingType('bicycle')">
+                        <img height="200px" width="200px" style="border-radius: 10px;" src="../assets/bike-parking.png" alt="">
+                    </div>
+                    <div class = "checkbox" style="height: 200px; width: 200px;" (click)="selectParkingType('car')">
+                        <img height="200px" width="200px" style="border-radius: 10px;" src="../assets/car-parking.png" alt="">
+                    </div>
+                </div>
+            </div>
+            
+        </div>
+
+        <div *ngIf = "parkingType != ''" class = "checkboxes-container">
+            <div class = "checkbox" [ngClass]="{'selected': parkingType == 'bicycle', 'unselected': parkingType != 'bicycle'}" (click)="selectParkingType('bicycle')">
+                <img height="100px" width="100px" style="border-radius: 10px;" src="../assets/bike-parking.png" alt="">
+            </div>
+            <div class = "checkbox" [ngClass]="{'selected': parkingType == 'car', 'unselected': parkingType != 'car'}" (click)="selectParkingType('car')">
+                <img height="100px" width="100px" style="border-radius: 10px;" src="../assets/car-parking.png" alt="">
+            </div>
+        </div>
+
+        <div class = "bike-form" *ngIf="parkingType == 'bicycle'">
+            <div class = "column">
+                <div class = "input-group">
+                    <select name="bicycleSpots" id="bicycleSpots" (change)="onSpotSelected($event)">
+                        <option value="">---</option>
+                        <ng-container *ngFor="let spot of parkingSpots">
+                            <option [value]="spot.id" *ngIf="spot.isBikeRack">
+                                {{spot.name}}
+                            </option>
+                        </ng-container>
+                        <option value="other">Other</option>
+                    </select>
+                    <button (click)="onClickInfoButton()"><img src="../assets/info-icon.svg" height="30px" width="30px" style="border-radius: 50%;" alt=""></button>
+                </div>
+                
+
+                <div *ngIf="otherSelected" style="text-align: center;">
+                    <form action="">
+                        <input type="text" id = "bike-name" placeholder="Name / Street Address">
+                    </form>
+                    <!-- <select name="size" id="size">
+                        <option value="Small">Small</option>
+                        <option value="Medium">Medium</option>
+                        <option value="Large">Large</option>
+                    </select> -->
+                    <p style="margin-top: 10%;">Available Slots - Total Slots</p>
+                    <form action="">
+                        <div style="margin-top: 0px; margin-left: 25%;" class = "row">
+                            <input style="width: 50px; margin-left: 5%; margin-top: 0px;" type="number" id = "bike-availableSlots">
+                            <input style="width: 50px; margin-left: 5%; margin-top: 0px;" type="number" id = "bike-totalSlots">
+                        </div>
+                    </form>
+                </div>
+                <div *ngIf = "!otherSelected && selectedSpot">
+                    Spots Available: {{selectedSpot.spotsAvailable}} / {{selectedSpot.totalSpots}}
+                </div>
+                <button (click)="openBikePopup()">Submit</button>
+                <div *ngIf = "errorCheck" style="text-align: center;"><p style="color: rgb(197, 5, 5)">Input error</p></div>
+            </div>
+        </div>
+
+        <div class = "car-form" *ngIf = "parkingType == 'car'">
+            <div class = "column">
+                <div class = "input-group">
+                    <select name="carSpots" id="carSpots" (change)="onSpotSelected($event)">
+                        <option value="">---</option>
+                        <ng-container *ngFor="let spot of parkingSpots">
+                            <option [value]="spot.id" *ngIf="spot.isBikeRack == false">
+                                {{spot.name}}
+                            </option>
+                        </ng-container>
+                        <option value="other">Other</option>
+                    </select>
+                    <button (click)="onClickInfoButton()"><img src="../assets/info-icon.svg" height="30px" width="30px" style="border-radius: 50%;" alt=""></button>
+                </div>
+                <div *ngIf="otherSelected" style="text-align: center;">
+                    <form action="">
+                        <input type="text" id = "car-name" placeholder="Name / Street Address">
+                    </form>
+                    <select name="size" id="size">
+                        <option value="Small">Small</option>
+                        <option value="Medium">Medium</option>
+                        <option value="Large">Large</option>
+                    </select>
+
+                    <select name="parking-condition" id="parking-condition">
+                        <option value="Indoor">Indoor</option>
+                        <option value="Outdoor">Outdoor</option>
+                        <option value="Underground">Underground</option>
+                    </select>
+                    <p style="margin-top: 5%; margin-bottom: 10px;">Electric Vehicle charger availability</p>
+                    <div class = "ev-container" style="margin-top: 10px;">
+                        <div class = "ev-box" [ngClass]="{'selected' : isEVSelected == true, 'unselected' : isEVSelected != true}" (click)="evDivClicked(true)">
+                            <img height = "50px" width = "50px" src="../assets/ev-yes.png" alt="">
+                        </div>
+
+                        <div class = "ev-box" [ngClass]="{'selected' : isEVSelected == false, 'unselected' : isEVSelected != false}" (click)="evDivClicked(false)">
+                            <img height = "50px" width = "50px" src="../assets/ev-no.png" alt="">
+                        </div>
+                    </div>
+
+                    <p style="margin-top: 5%;">Cost ($/hr)</p>
+                    <form action="">
+                        <input style="width: 50px; margin-left: 40%; margin-top: 0px;" type="number" id = "cost">
+                    </form>
+
+                    <p style="margin-top: 5%;">Available Slots - Total Slots</p>
+                    <form action="">
+                        <div style="margin-top: 0px; margin-left: 25%;" class = "row">
+                            <input style="width: 50px; margin-left: 5%; margin-top: 0px;" type="number" id = "car-availableSlots">
+                            <input style="width: 50px; margin-left: 5%; margin-top: 0px;" type="number" id = "car-totalSlots">
+                        </div>
+                    </form>
+                </div>
+                <div *ngIf = "!otherSelected && selectedSpot">
+                    Spots Available: {{selectedSpot.spotsAvailable}} / {{selectedSpot.totalSpots}}
+                </div>
+                <button (click)="openCarPopup()">Submit</button>
+                <div *ngIf = "errorCheck" style="text-align: center;"><p style="color: rgb(197, 5, 5)">Input error</p></div>
+            </div>
+        </div>
+    </div>
+
+    <div *ngIf = "isBikePopupVisible" class="popup">
+        <div *ngIf = "otherSelected" class="bike-popup-content">
+            <h2 style="font-size: 16px;">Report Bicycle Rack Confirmation:</h2>
+            <div style="text-align: center;">
+                <p style="font-size: 20px;"> {{reportedBikeInformation.name}} </p>
+                <p style="font-size: 20px;"> Available Slots : {{reportedBikeInformation.slotsAvailable}} / {{reportedBikeInformation.totalSlots}}</p>
+            </div>
+            <div style="padding-bottom: 10px;"></div>
+            <div class = "row">
+                <button id="closePopup" class = "close-button" (click)="closeBikePopup()">Close</button>
+                <button class = "continue-button" (click)="populateBikeInformation()"> Continue </button>
+            </div>
+        </div>
+
+        <div *ngIf = "!otherSelected" class="bike-popup-content">
+            <h2 style="font-size: 16px;">Report Bicycle Rack Confirmation:</h2>
+            <div style="text-align: center;">
+                <p style="font-size: 20px;">{{selectedSpot.name}}</p>
+                <p style="font-size: 20px;">Availability: {{selectedSpot.spotsAvailable}} / {{selectedSpot.totalSpots}}</p>
+            </div>
+            <div style="padding-bottom: 10px;"></div>
+            <div class = "row">
+                <button id="closePopup" class = "close-button" (click)="closeBikePopup()">Close</button>
+                <button class = "continue-button" (click)="increaseAvailability()"> Continue </button>
+            </div>
+        </div>
+    </div>
+
+    <div *ngIf = "isCarPopupVisible" class="popup">
+        <div *ngIf = "otherSelected" class="car-popup-content">
+            <h2 style="font-size: 16px;">Report Car Rack Confirmation:</h2>
+            <div style="text-align: center;">
+                <p style="font-size: 20px;"> {{reportedCarInformation.name}} </p>
+                <p style="font-size: 20px;"> Available Slots : {{reportedCarInformation.spotsAvailable}} / {{reportedCarInformation.totalSpots}}</p>
+                <table style="border: 1px solid black; margin-left: 20%;">
+                    <tr><th>Cost ($ / hr):</th><td>{{reportedCarInformation.cost}}</td></tr>
+                    <tr><th>Parking Condition:</th><td>{{reportedCarInformation.parkingCondition}}</td></tr>
+                    <tr><th>Is EV charging available:</th><td>{{reportedCarInformation.evAvilable}}</td></tr>
+                    <tr><th>Size of parking:</th><td>{{reportedCarInformation.sizeOfSpot}}</td></tr>
+                </table>
+            </div>
+            <div style="padding-bottom: 10px;"></div>
+            <div class = "row">
+                <button id="closePopup" class = "close-button" (click)="closeCarPopup()">Close</button>
+                <button class = "continue-button" (click)="populateCarInformation()"> Continue </button>
+            </div>
+        </div>
+
+        <div *ngIf = "!otherSelected" class="bike-popup-content">
+            <h2 style="font-size: 16px;">Report Car Parking Confirmation:</h2>
+            <div style="text-align: center;">
+                <p style="font-size: 20px;">{{selectedSpot.name}}</p>
+                <p style="font-size: 20px;">Availability: {{selectedSpot.spotsAvailable}} / {{selectedSpot.totalSpots}}</p>
+            </div>
+            <div style="padding-bottom: 10px;"></div>
+            <div class = "row">
+                <button id="closePopup" class = "close-button" (click)="closeCarPopup()">Close</button>
+                <button class = "continue-button" (click)="increaseAvailability()"> Continue </button>
+            </div>
+        </div>
+    </div>
+
+    <div *ngIf="showLoginPopup" class = "popup">
+        <div class="popup-content">
+            <p>Please login to add spot</p>
+            <div style="margin-top: 10%;" class = "row">
+                <button class="close-button" (click)="navigatePage('login')">Login</button>
+                <button class="continue-button" (click)="navigatePage('signup')">Register</button>
+            </div>
+            <button class = "login-back-button" (click)="closeLoginPopup()">Back</button>
+        </div>
+    </div>
+
+    <div *ngIf="showInfoPopup" class = "popup">
+        <div class="popup-content" style="height: 200px;">
+            <p>On this page you can add a new Parking Location or report one that has cleared up.</p>
+            <p style="font-size: 12px;">1. Select the vehicle you would like to report parking for.</p>
+            <p style="font-size: 12px;">2. If you would like to add a new Parking Location, click on other and fill out the required information</p>
+            <p style="font-size: 12px;">3. If you would like to report a parking which has cleared up, please select the parking location and click submit</p>
+            <button class = "login-back-button" (click)="closeInfoPopup()">Back</button>
+        </div>
+    </div>
+</div>
+
+

@@ -1,0 +1,33 @@
+<div class = "login-bar" *ngIf="!loggedIn">
+  <button style="color: white" (click)="navigatePage('login')">Login</button>
+  <button style="color: white" (click)="navigatePage('signup')">Register</button>
+</div>
+<div *ngIf="loggedIn">
+  <div class = "row">
+    <img height="40px" style="margin-top: 5px;" src="assets/profile-icon.png" alt="">
+    <p style="margin-left: 7px;">{{userInfo.name}}</p>
+    <div class = "login-bar">
+      <button style="color: white; width: 200px;" (click)="navigatePage('view-reservations')">View My Reservations</button>
+      <button style="color: white" (click)="logout()">Logout</button>
+    </div>
+  </div>
+</div>
+<div *ngIf = "!isLoaded" class = "loading-image">
+  <img src="assets/ParkNow.gif" alt="Loading...">
+</div>
+
+<div *ngIf="isLoaded">
+  <div *ngIf = "showAppBar" class = "app-bar">
+    <img class = "logo-img" src="assets/ParkNow.png" alt="" (click)="navigatePage('')">
+    <div class = "vl"></div>
+    <button (click)="navigatePage('find-parking')" [ngClass]="{'selected' : selectedPage == '/find-parking', 'unselected' : selectedPage != '/find-parking'}">Find Parking</button>
+    <div class = "vl"></div>
+    <button (click)="navigatePage('report-parking')" [ngClass]="{'selected' : selectedPage == '/report-parking', 'unselected' : selectedPage != '/report-parking'}">Add Parking</button>
+    <div class = "vl"></div>
+    <!-- <button>Profile</button>
+    <div class = "vl"></div>
+    <button>Other</button>
+    <div class = "vl"></div> -->
+  </div>
+  <router-outlet></router-outlet>
+</div>

@@ -1,0 +1,25 @@
+<body>
+    <!-- <div style="padding-top: 5%;"></div> -->
+    <div class="header-container">
+        <p>Vehicle Type</p>
+        <p>Name of Parking</p>
+        <p>Date Booked</p>
+    </div>
+    <div class="grid-item" style="padding-top: 2%;" *ngFor="let spot of reservedSpots"> 
+        <div class="spot-container" (click)="clickOnParking(spot.parkingSpot)">
+            <div *ngIf = "spot.parkingSpot.isBikeRack"><img style="border-radius: 10px; background-color: white;" height="80px" width="80px" src="../assets/bike-logo.png" alt=""></div>
+            <div *ngIf = "!spot.parkingSpot.isBikeRack"><img style="border-radius: 10px; background-color: white;" height="80px" width="80px" src="../assets/car-logo.png" alt=""></div>
+            <h3>{{spot.parkingSpot.name}}</h3>
+            <div style="display: flex;">
+                <h3>{{spot.date}} {{spot.time}}</h3>
+                <button class="close-button" (click)="deleteReservation(spot.id!)">X</button>
+            </div>
+            
+        </div>
+    </div>
+
+    <div class = "grid-item" style="padding-top: 2%;">
+        <div id="map" style="height: 55vh; border-radius: 20px;"></div>
+    </div>
+
+</body>
